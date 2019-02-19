@@ -58,8 +58,10 @@ function addLevel(mysvg,prevLay,way='down',type_nn="3D"){
 		if(way==='up'){
 			lay1 = addConvLayer3D(mysvg,lay);
 			lay1 = addBatchNormalization(mysvg,lay1);
+			lay1 = addDropout(mysvg,lay1,'');
 			lay2 = addConvLayer3D(mysvg,lay1);
 			lay2 = addBatchNormalization(mysvg,lay2);
+			lay2 = addDropout(mysvg,lay2,'');
 			lay3 = addDeconvLayer3D(mysvg,lay2);
 		}else{
 			lay1 = addConvLayer3D(mysvg,lay);
@@ -86,7 +88,7 @@ function addMaxPoolLayer(obj,prevLay){
 	_TOT_WEIGHTS = _DISPLAY_TYPE === "SINGLE"? 0 :  _TOT_WEIGHTS;
 	var lay = Object.assign({},prevLay);
 //	lay = drawVertArrow(obj,lay,'red');
-	lay.x = drawHorArrow(obj,lay.x,lay.y,'red');
+	lay.x = drawHorArrow(obj,lay.x,lay.y,deconv_color);
     // Just adding one value for each rows*cols*depth*bands
 
 	var currVal =(lay.rows*lay.cols*lay.depth*lay.bands*(_FILTER_SIZE+_FILTER_SIZE + 10))*lay.filters;
@@ -188,9 +190,34 @@ function addBatchNormalization(obj,prevLay){
 		.attr('transform','translate('+(lay.x+wlay/2)+' '+(lay.y-6)+') rotate(0 0 0)')
 		.append("text")
 			.style('fill','black')
-			.attr('font-size',9)
+			.attr('font-size',_font_size*.9)
 			.attr('writing-mode','tb')
 			.text('BN');
+
+	lay.x += wlay+5;
+	return lay;
+}
+function addDropout(obj,prevLay,text){
+	var lay = Object.assign({},prevLay);
+	var wlay = 10;
+	var ystart = lay.y-lay.rows*scale/2;
+	obj.append("rect")
+			.attr('x',lay.x)
+			.attr('y',ystart)
+			.attr('rx',round_borders)
+			.attr('ry',round_borders)
+			.attr('width',wlay)
+			.attr('height',lay.rows*scale)
+			.style('fill',dropout_color);
+
+	obj.append("g")
+		.attr('transform','translate('+(lay.x+wlay/2)+' '+(lay.y-20)+') rotate(0 0 0)')
+		.append("text")
+			.style('fill','black')
+			.attr('font-size',_font_size*.9)
+			.attr('writing-mode','tb')
+//			.text('Dropout '+perc+'%');
+			.text(text);
 
 	lay.x += wlay+5;
 	return lay;
@@ -217,19 +244,20 @@ function addLayer(obj,prevLay,box_color=def_color,txt_color='black'){
 	obj.append("text")
 			.attr('x',lay.x+wlay/2-10)
 			.attr('y',ystart-5)
+			.attr('font-size',_font_size*1.4)
 			.style('fill',txt_color)
 			.text(lay.bands);
 
 	// Adding the total size of the input
 	obj.append("g")
-		.attr('transform','translate('+(lay.x+wlay/2)+' '+(yend+5)+') rotate(-40 0 0)')
+		.attr('transform','translate('+(lay.x+wlay/2)+' '+(yend+5)+') rotate(-35 0 0)')
 		.append("text")
 			.style('fill',txt_color)
-			.attr('font-size',13)
+			.attr('font-size',_font_size*1.3)
 			.attr('writing-mode','tb')
 			.text(lay.rows)
 				.append('tspan')
-				.attr('font-size',9)
+				.attr('font-size',_font_size*.8)
 				.attr('baseline-shift','super')
 				.text(sups);
 
@@ -248,7 +276,7 @@ function addLayer(obj,prevLay,box_color=def_color,txt_color='black'){
 			.append("text")
 				.style('fill','blue')
 				.attr('writing-mode','tb')
-				.attr('font-size',10)
+				.attr('font-size',_font_size)
 				.attr('word-spacing',5)
 				.text(disp_data);
 	}
@@ -260,9 +288,25 @@ function addLayer(obj,prevLay,box_color=def_color,txt_color='black'){
 	return lay;
 }
 
-function addDescription(obj, startx, starty, desc, color){
+function addDescriptionArrow(obj, startx, starty, desc, color){
 	var x = startx - 600*scale;
 	var y = starty - 100*scale;
+	var width_arrow = 90*scale*_SCALE_W;
+
+	console.log(color)
+	drawHorArrow(obj,x,y,color);
+	obj.append("text")
+			.attr('transform','translate('+(x+width_arrow+5)+' '+(y)+') rotate(-90 0 0)')
+			.style('fill','black')
+			.attr('writing-mode','tb')
+			.attr('font-size',_font_size*1.5)
+			.attr('word-spacing',5)
+			.text(desc);
+}
+
+function addDescriptionBox(obj, startx, starty, desc, color){
+	var x = startx - 600*scale;
+	var y = starty - 110*scale;
 	var width_rect = 90*scale*_SCALE_W;
 	var height_rect = 25*scale;
 	obj.append("rect")
@@ -277,7 +321,7 @@ function addDescription(obj, startx, starty, desc, color){
 			.attr('transform','translate('+(x+width_rect+10)+' '+(y+height_rect/2)+') rotate(-90 0 0)')
 			.style('fill','black')
 			.attr('writing-mode','tb')
-			.attr('font-size',13)
+			.attr('font-size',_font_size*1.5)
 			.attr('word-spacing',5)
 			.text(desc);
 }

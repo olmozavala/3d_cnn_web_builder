@@ -14,7 +14,7 @@ d3.select('svg')
 var mysvg = d3.select('svg');
 
 var rows=168;
-var cols=168;
+var cols=rows;
 var depth=168;
 var bands=1;
 var filters=8;
@@ -29,13 +29,15 @@ var _W_TYPE = 4; // (in bytes) float 32 bits --> 4 bytes
 var _FILTER_SIZE = 27; // 3x3x3
 var _TYPE_NN = "3D";
 var _SCALE_W= .35;//Only to scale the layers width
-var _DISPLAY = 'NONE';//Displays GB, FLOPS, NONE, Weigths
+var _DISPLAY = 'Weigths';//Displays GB, FLOPS, NONE, Weigths
+//var _DISPLAY_TYPE = 'ACCUMULATIVE';//Displays SINGLE or ACCUMULATIVE
 var _DISPLAY_TYPE = 'SINGLE';//Displays SINGLE or ACCUMULATIVE
+var _font_size = 12
 
 addDefs(mysvg);
 
 var imgsize = 180*scale;
-var numImgs = 4;
+var numImgs = 8;
 
 addImageCube(mysvg, x, y-10-imgsize/2, 'images/tra.png',numImgs, imgsize)
 addImageCube(mysvg, x, y-10-imgsize/2+sizeStream, 'images/sag.png',numImgs, imgsize)
@@ -61,8 +63,8 @@ var initial_filters=8;
 
 positions = [s2_g3_pool1, s1_g3_pool1, s3_g3_pool1];
 var currLay  = concatLayers(mysvg, positions,s2_g3_pool1.x,s2_g3_pool1.y, 1);
-//currLay.filters=192;
-currLay.filters=128;
+currLay.filters=192;
+//currLay.filters=128;
 currLay = addConvLayer3D(mysvg,currLay); 
 currLay.filters=128;
 currLay  = addConvLayer3D(mysvg,currLay); 
@@ -87,8 +89,10 @@ currLay = concatLayers(mysvg, positions,currLay.x,currLay.y, 4);
 currLay.filters=16;
 currLay = addConvLayer3D(mysvg,currLay); 
 currLay = addBatchNormalization(mysvg,currLay);
+currLay = addDropout(mysvg,currLay,'Dropout 20%');
 currLay = addConvLayer3D(mysvg,currLay); 
 currLay = addBatchNormalization(mysvg,currLay);
+currLay = addDropout(mysvg,currLay,'Dropout 20%');
 currLay.filters=1;
 addConvLayer3D(mysvg,currLay);
 
@@ -102,9 +106,18 @@ allBack.each(function(d){
 
 // This part adds description of each layer
 var desc_space = 50;
-addDescription(mysvg, currLay.x, s3_g3_pool1.y+desc_space*scale, '3D Convolution', def_color);
-addDescription(mysvg, currLay.x, s3_g3_pool1.y+2*desc_space*scale, '3D MaxPool/Deconvolution', maxpool_color);
-addDescription(mysvg, currLay.x, s3_g3_pool1.y+3*desc_space*scale, 'Concatenation', concat_color1);
-addDescription(mysvg, currLay.x, s3_g3_pool1.y+4*desc_space*scale, 'Batch Normalization', bn_color);
+var start_x = s3_g3_pool1.y - 10
+addDescriptionArrow(mysvg, currLay.x, start_x+desc_space*scale, '3D Convolution (3x3x3)', def_color);
+addDescriptionArrow(mysvg, currLay.x, start_x+2*desc_space*scale, '3D MaxPool/Deconvolution (2x2x2)', maxpool_color);
+addDescriptionArrow(mysvg, currLay.x, start_x+3*desc_space*scale, 'Concatenation', concat_color3);
+addDescriptionBox(mysvg, currLay.x,   start_x+4*desc_space*scale, 'Batch Normalization', bn_color);
+addDescriptionBox(mysvg, currLay.x,   start_x+5*desc_space*scale, 'Dropout 20%', dropout_color);
+
+//addDescriptionBox(mysvg, currLay.x, s3_g3_pool1.y+desc_space*scale, '3D Convolution', def_color);
+//addDescriptionBox(mysvg, currLay.x, s3_g3_pool1.y+2*desc_space*scale, '3D MaxPool/Deconvolution', maxpool_color);
+//addDescriptionBox(mysvg, currLay.x, s3_g3_pool1.y+3*desc_space*scale, 'Concatenation', concat_color1);
+//addDescriptionBox(mysvg, currLay.x, s3_g3_pool1.y+4*desc_space*scale, 'Batch Normalization', bn_color);
+//addDescriptionBox(mysvg, currLay.x, s3_g3_pool1.y+5*desc_space*scale, 'Dropout 20%', dropout_color);
+
 
 addImageCube(mysvg, currLay.x+30*scale, y-imgsize/2+sizeStream, 'images/pro.png',1, imgsize*1)

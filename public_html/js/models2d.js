@@ -1,6 +1,7 @@
 var width = 2500;
 var height = 1500;
 var bardata =  d3.range(0,20) ;
+var round_borders = 2;
 
 var barWidth = 40;
 var barHeight = 100;
@@ -29,8 +30,9 @@ var _W_TYPE = 4; // (in bytes) float 32 bits --> 4 bytes
 var _FILTER_SIZE = 9; // 3x3
 var _TYPE_NN = "2D";
 var _SCALE_W= .23;//Only to scale the layers width
-var _DISPLAY = 'FLOPS';//Displays GB, FLOPS, or Weigths
-//var _DISPLAY = 'Weights';//Displays GB or Weigths
+//var _DISPLAY = 'FLOPS';//Displays GB, FLOPS, or Weigths
+var _DISPLAY = 'GB';//Displays GB or Weigths
+var _DISPLAY_TYPE = 'ACCUMULATIVE';//Displays SINGLE or ACCUMULATIVE
 
 addDefs(mysvg);
 
