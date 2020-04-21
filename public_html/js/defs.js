@@ -7,6 +7,7 @@
 var deconv_color = "#84A432";
 var maxpool_color = deconv_color;
 var def_color = "#003F58";
+var full_layer_color = "#FFB500";
 var concat_color1 = "#D0D0D0";
 var concat_color2 = "#707070";
 var concat_color3 = "#A0A0A0";
@@ -14,10 +15,15 @@ var concat_color4 = "#D0D0D0";
 var concat_color = "#F0D0D0";
 var bn_color= '#FBEE76';
 var dropout_color= '#3BE2F8';
+var low_risk= '#27AA53';
+var moderate_risk = '#EABC46';
+var high_risk = '#E08C42';
+var ex_risk = '#C50A14';
 
-var arrow_color_names  = ['def','k','r','g','y','b','o','d','d1','d2','d3','d4','ba','drop'];
+var arrow_color_names  = ['def','k','r','g','y','b','o','d','d1','d2','d3','d4','ba','drop','c1','c2','c3','c4'];
 var arrow_colors = [def_color,'black','red','green',concat_color,'blue','orange',deconv_color,
-						concat_color1, concat_color2, concat_color3, concat_color4, bn_color,dropout_color];
+						concat_color1, concat_color2, concat_color3, concat_color4, bn_color,dropout_color,
+						low_risk, moderate_risk, high_risk, ex_risk];
 
 function addDefs(obj){
 	var ascale = scale;

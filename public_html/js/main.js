@@ -13,25 +13,31 @@ d3.select('svg')
 
 var mysvg = d3.select('svg');
 
-var rows=168;
-var cols=rows;
+var rows=888;
+var cols=1400;
 var depth=168;
 var bands=1;
 var filters=8;
 var x = 10;
-var y = 100;
+var y = 200;
 var scale = 0.50;// Scale of the whole NN
-var sizeStream = 320*scale;
 var arr_offset = 12;
 var _TOT_WEIGHTS = 0;// TOtal number of weights
 var _TOT_FLOPS = 0;// TOtal number of weights
+var _INTPUT_SIZE = 0;//
 var _W_TYPE = 4; // (in bytes) float 32 bits --> 4 bytes
 var _FILTER_SIZE = 27; // 3x3x3
-var _TYPE_NN = "3D";
-var _SCALE_W= .35;//Only to scale the layers width
-var _DISPLAY = 'Weigths';//Displays GB, FLOPS, NONE, Weigths
-//var _DISPLAY_TYPE = 'ACCUMULATIVE';//Displays SINGLE or ACCUMULATIVE
-var _DISPLAY_TYPE = 'SINGLE';//Displays SINGLE or ACCUMULATIVE
+var _TYPE_NN = "2D";
+var _SCALE_W= 0.35;//Only to scale the layers width
+var _SCALE_H= .4;//Only to scale the layers hight
+var _DISPLAY = 'NONE';//Displays: GB, FLOPS, NONE, Weigths, INPUT_SIZE
+var _DISPLAY_TYPE = 'ACCUMULATIVE';//Displays SINGLE or ACCUMULATIVE
+var sizeStream = (rows*1.4)*scale*_SCALE_H;  // The 2 controls the space between streams
+//var _DISPLAY_TYPE = 'SINGLE';//Displays SINGLE or ACCUMULATIVE;
+
+var DISP_BN = true;  // Indicates if we want to display BN layers
+var DISP_DROPOUT = true;  // Indicates if we want to display BN layers
+
 var _font_size = 12
 
 addDefs(mysvg);
@@ -63,8 +69,8 @@ var initial_filters=8;
 
 positions = [s2_g3_pool1, s1_g3_pool1, s3_g3_pool1];
 var currLay  = concatLayers(mysvg, positions,s2_g3_pool1.x,s2_g3_pool1.y, 1);
-currLay.filters=192;
-//currLay.filters=128;
+//currLay.filters=192;
+currLay.filters=128;
 currLay = addConvLayer3D(mysvg,currLay); 
 currLay.filters=128;
 currLay  = addConvLayer3D(mysvg,currLay); 
